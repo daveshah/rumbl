@@ -5,11 +5,12 @@ defmodule Rumbl.User do
     field :name, :string
     field :username, :string
     field :password, :string, virtual: true
+    field :password_confirmation, :string, virtual: true
     field :password_hash, :string
     timestamps
   end
 
-  @required_fields ~w(name username)
+  @required_fields ~w(name username password_confirmation)
   @optional_fields ~w()
 
   def changeset(model, params \\ :empty) do
@@ -23,6 +24,8 @@ defmodule Rumbl.User do
     |> changeset(params)
     |> cast(params, ~w(password), [])
     |> validate_length(:password, min: 6, max: 100)
+    |> validate_length(:password_confirmation, min: 6, max: 100)
+    |> validate_confirmation(:password)
     |> put_pass_hash()
   end
 
