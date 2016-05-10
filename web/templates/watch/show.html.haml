@@ -1,0 +1,14 @@
+%h2
+  =@video.title
+  .row
+    .col-sm-7
+      = content_tag :div, id: "video", data: [id: @video.id, player_id: player_id(@video)] do
+      = end
+    .col-sm-5
+      .panel.panel-default
+        .panel-heading
+          %h3.panel-title Annotations
+        .panel-body.annotations{id: 'msg-container'}
+        .panel-footer
+          %textarea.form-control{id: 'msg-input', rows: '3', placeholder: 'Comment...'}
+          %button.btn.btn-primary.form-control{id: 'msg-submit', type: 'submit'} Post
