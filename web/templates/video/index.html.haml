@@ -1,0 +1,25 @@
+%h2 Listing Videos
+%table.table
+  %thead
+    %tr
+      %th User
+      %th Url
+      %th Title
+      %th Description
+  %tbody
+    = for video <- @videos do
+      %tr
+        %td
+          = video.user_id
+        %td
+          = video.url
+        %td
+          = video.title
+        %td
+          = video.description
+        %td.text-right
+          = link "Watch", to: watch_path(@conn, :show, video), class: "btn btn-default btn-xs"
+          = link "Edit", to: video_path(@conn, :edit, video), class: "btn btn-default btn-xs"
+          = link "Delete", to: video_path(@conn, :delete, video), method: :delete, data: [confirm: "Are you sure?"], class: "btn btn-danger btn-xs"
+    = end
+= link "New video", to: video_path(@conn, :new)
