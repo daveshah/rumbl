@@ -2,7 +2,7 @@ defmodule Rumbl.VideoChannel do
   use Rumbl.Web, :channel
 
   def join("videos:" <> video_id, params, socket) do
-    {:ok, socket}
+    {:ok, assign(socket, :video_id, String.to_integer(video_id))}
   end
 
   def handle_in("new_annotation", params, socket) do
