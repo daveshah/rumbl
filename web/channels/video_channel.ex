@@ -5,13 +5,31 @@ defmodule Rumbl.VideoChannel do
     {:ok, assign(socket, :video_id, String.to_integer(video_id))}
   end
 
-  def handle_in("new_annotation", params, socket) do
-    broadcast! socket, "new_annotation", %{
-      user: %{username: "anon"},
-      body: params["body"],
-      at: params["at"]
-    }
+  def handle_in(event, params, socket) do
+    user = Repo.get(Rumbl.User, socket.assigns.user_id)
+    handle_in(event, params, user, socket)
+  end
 
-    {:reply, :ok, socket}
+  def handle_in("new_annotation", params, user, socket) do
+    changeset =
+      user
+      |> build_assoc(:annotations, video_id: socket.assigns.video_id)
+      |> Rumbl.Annotation.changeset(params)
+
+
+    case Repo.insert(changeset) do
+      {:ok, annotation} ->
+
+        broadcast! socket, "new_annotation", %{
+          id: annotation.id,
+          user: Rumbl.UserView.render("user.json", %{user: user}),
+          body: annotation.body,
+          at: annotation.at
+        }
+        {:reply, :ok, socket}
+
+      {:error, changeset} ->
+        {:reply, {:error, %{errors: changeset}}, socket}
+    end
   end
 end
